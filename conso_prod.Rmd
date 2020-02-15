@@ -2,7 +2,7 @@
 title: "Consommation - Production : Evolution mensuelle par région - 2014 - 2018"
 output:
    html_document:
-     theme: flatly
+     theme: darkly
 ---
 
 ```{r setup, include=FALSE}
@@ -13,6 +13,7 @@ library(janitor)
 library(gganimate)
 library(ggdark)
 library(gganimate)
+library(lubridate)
 library(maps)
 ```
 
@@ -38,8 +39,11 @@ data <- data %>%
 ```
 
 
+[Jeu de données](https://opendata.reseaux-energies.fr/explore/dataset/equilibre-regional-mensuel-prod-conso-brute/information/?disjunctive.region)
 
-```{r echo=FALSE, warning=F}
+[Code source](https://github.com/NadjibB/conso_prod/)
+
+```{r echo=FALSE, warning=F, message=F}
 #visualisation
 data %>% 
   filter(variable %in% c('production_totale_m_wh', 
@@ -52,13 +56,13 @@ data %>%
              fill = variable)) +
   geom_col() +
   scale_fill_manual(values = c(production_totale_m_wh = 'blue',
-                               consommation_brute_m_wh = 'orange'))+
-  # transition_states(mois)+
+                               consommation_brute_m_wh = 'orange')) +
+  #transition_states(mois)+
+  dark_theme_minimal()+
   coord_flip()+
   labs(x = '',
        y = '')+
-  dark_theme_minimal()+
-  theme(legend.position = 'bottom')
+  theme(legend.position = 'bottom') 
 ```
 
 
