@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/573810/967c22b0a9844b44b337589937e573de
+bundleId: https://api.rpubs.com/api/v1/document/573810/967c22b0a9844b44b337589937e573de
+url: http://rpubs.com/nadjibB/573810
+when: 1581889486.3621

@@ -2,7 +2,7 @@
 title: "Consommation - Production : Evolution mensuelle par région - 2014 - 2018"
 output:
    html_document:
-     theme: darkly
+     theme: flatly
 ---
 
 ```{r setup, include=FALSE}
@@ -11,6 +11,7 @@ library(tidyverse)
 library(readr)
 library(janitor)
 library(gganimate)
+library(plotly)
 library(ggdark)
 library(gganimate)
 library(lubridate)
@@ -39,33 +40,63 @@ data <- data %>%
 ```
 
 
-[Jeu de données](https://opendata.reseaux-energies.fr/explore/dataset/equilibre-regional-mensuel-prod-conso-brute/information/?disjunctive.region)
 
-[Code source](https://github.com/NadjibB/conso_prod/)
 
-```{r echo=FALSE, warning=F, message=F}
-#visualisation
-data %>% 
+Le graphique suivant présente les données de <span style="color:orange">**CONSOMMATION** </span> et de <span style="color:blue">**PRODUCTION** </span> d'éléctricité régionales (en TWh) de janvier 2014 à décembre 2018.
+
+Pour lancer l'animation, cliquer sur "Play" ou déplacer le curseur.
+
+
+```{r echo=FALSE, warning=FALSE}
+
+rr <- data %>% 
   filter(variable %in% c('production_totale_m_wh', 
                          'consommation_brute_m_wh')) %>% 
   mutate(value = if_else(variable == 'consommation_brute_m_wh',
                          -value,
-                         value)) %>% 
-  ggplot(aes(region,
-             value,
+                         value),
+         variable = if_else(variable == 'consommation_brute_m_wh', 
+                            'Consommation',
+                            'Production'))
+
+
+zz <- rr %>% 
+  ggplot(aes(x = region, 
+             color = region,
+             y = (round(value / 1000000, 2)), 
+             text = paste(variable, ": ", abs((round(value / 1000000, 2))), " TWh"),
+             frame = mois, 
              fill = variable)) +
-  geom_col() +
-  scale_fill_manual(values = c(production_totale_m_wh = 'blue',
-                               consommation_brute_m_wh = 'orange')) +
-  #transition_states(mois)+
-  dark_theme_minimal()+
-  coord_flip()+
+  geom_col(position = "identity")+
+  coord_flip() +
   labs(x = '',
-       y = '')+
-  theme(legend.position = 'bottom') 
+       y = '') +
+  scale_color_manual(values = rep('white', 13)) +
+  scale_fill_manual(values = c(Production = 'blue',
+                               Consommation = 'orange'))+
+  scale_y_continuous(breaks = seq(-10, 10, 2),
+                     labels = abs(seq(-10, 10, 2)))+
+  theme_minimal()
+  
+
+
+ggplotly(zz, 
+         tooltip = c("x", "frame","text")) %>% 
+  layout(showlegend = F) %>% 
+  animation_slider(
+    currentvalue = list(prefix = "Mois: ",
+                        font = list(color = 'blue'))
+  )
+
+
+
+
+
 ```
 
+[Jeu de données](https://opendata.reseaux-energies.fr/explore/dataset/equilibre-regional-mensuel-prod-conso-brute/information/?disjunctive.region)
 
+[Code source](https://github.com/NadjibB/conso_prod/)
 
 
 
